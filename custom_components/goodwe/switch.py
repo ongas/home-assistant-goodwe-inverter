@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import logging
 from typing import Any
 
-from goodwe import Inverter, InverterError
+from .lib_goodwe.goodwe import Inverter, InverterError
 from homeassistant.components.switch import (
     SwitchDeviceClass,
     SwitchEntity,

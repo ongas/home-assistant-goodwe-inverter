@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from goodwe import Inverter, InverterError
+from .lib_goodwe.goodwe import Inverter, InverterError
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 

@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import logging
 from typing import Any
 
-from goodwe import Inverter, InverterError, RequestFailedException
+from .lib_goodwe.goodwe import Inverter, InverterError, RequestFailedException
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_SCAN_INTERVAL
 from homeassistant.core import HomeAssistant

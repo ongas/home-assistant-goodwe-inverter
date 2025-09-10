@@ -6,7 +6,7 @@ from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 import logging
 
-from goodwe import Inverter, InverterError
+from .lib_goodwe.goodwe import Inverter, InverterError
 from homeassistant.components.number import (
     NumberDeviceClass,
     NumberEntity,

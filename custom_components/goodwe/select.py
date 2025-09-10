@@ -2,7 +2,7 @@
 
 import logging
 
-from goodwe import Inverter, InverterError, OperationMode
+from .lib_goodwe.goodwe import Inverter, InverterError, OperationMode
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
 from homeassistant.const import (
     STATE_UNAVAILABLE,

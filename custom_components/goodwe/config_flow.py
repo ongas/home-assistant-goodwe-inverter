@@ -7,7 +7,7 @@ from typing import Any
 
 import voluptuous as vol
 
-from goodwe import InverterError, connect
+from .lib_goodwe.goodwe import InverterError, connect
 from homeassistant.config_entries import (
     ConfigEntry,
     ConfigFlow,
