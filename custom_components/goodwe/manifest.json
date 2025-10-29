@@ -12,5 +12,5 @@
   "issue_tracker": "https://github.com/mletenay/home-assistant-goodwe-inverter/issues",
   "loggers": ["goodwe"],
   "requirements": [],
-  "version": "0.9.9.29"
+  "version": "0.9.9.30"
 }
