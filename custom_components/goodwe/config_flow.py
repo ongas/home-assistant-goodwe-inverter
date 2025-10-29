@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-import json
 import logging
-import os
 from typing import Any
 
 import voluptuous as vol
@@ -33,16 +31,6 @@ from .const import (
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
 )
-
-_version = "unknown"
-try:
-    with open(
-        os.path.join(os.path.dirname(__file__), "manifest.json"), encoding="utf-8"
-    ) as manifest_file:
-        manifest = json.load(manifest_file)
-        _version = manifest["version"]
-except (FileNotFoundError, KeyError):
-    pass
 
 MODEL_FAMILY_OPTIONS = [
     "Auto-detect", "ET", "EH", "BT", "BH", "ES", "EM", "BP", "DT", "MS", "D-NS", "XS"
@@ -171,5 +159,4 @@ class GoodweFlowHandler(ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=CONFIG_SCHEMA,
             errors=errors,
-            description_placeholders={"component_version": _version},
         )
