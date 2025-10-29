@@ -1,0 +1,186 @@
+{
+  "rules": [
+    {
+      "type": "command_pattern",
+      "value": "git status",
+      "description": "Shell command: git status",
+      "id": "1761601680773-i42g8u3un",
+      "createdAt": 1761601680773,
+      "lastUsed": 1761688814834
+    },
+    {
+      "type": "tool_kind",
+      "value": "edit",
+      "description": "Always allow edit operations",
+      "id": "1761601713682-5ojnoje1k",
+      "createdAt": 1761601713682
+    },
+    {
+      "type": "command_pattern",
+      "value": "git commit",
+      "description": "Shell command: git commit",
+      "id": "1761601733940-fss3yl7cn",
+      "createdAt": 1761601733940,
+      "lastUsed": 1761688830001
+    },
+    {
+      "type": "command_pattern",
+      "value": "git push",
+      "description": "Shell command: git push",
+      "id": "1761601751239-v73qfznzr",
+      "createdAt": 1761601751239,
+      "lastUsed": 1761688835754
+    },
+    {
+      "type": "command_pattern",
+      "value": "git branch",
+      "description": "Shell command: git branch",
+      "id": "1761601831765-e1fhjnph9",
+      "createdAt": 1761601831765,
+      "lastUsed": 1761618843814
+    },
+    {
+      "type": "command_pattern",
+      "value": "git fetch origin",
+      "description": "Shell command: git fetch origin",
+      "id": "1761601839149-h0sr8o9vk",
+      "createdAt": 1761601839149
+    },
+    {
+      "type": "command_pattern",
+      "value": "git remote show",
+      "description": "Shell command: git remote show",
+      "id": "1761601847460-zq1ax3fw6",
+      "createdAt": 1761601847460
+    },
+    {
+      "type": "command_pattern",
+      "value": "curl",
+      "description": "Shell command: curl",
+      "id": "1761601892238-l3thpunyd",
+      "createdAt": 1761601892238
+    },
+    {
+      "type": "command_pattern",
+      "value": "cat",
+      "description": "Shell command: cat",
+      "id": "1761611748936-8e2llks47",
+      "createdAt": 1761611748936,
+      "lastUsed": 1761612982858
+    },
+    {
+      "type": "command_pattern",
+      "value": "grep",
+      "description": "Shell command: grep",
+      "id": "1761613333406-c9q8pxguj",
+      "createdAt": 1761613333406
+    },
+    {
+      "type": "command_pattern",
+      "value": "ls",
+      "description": "Shell command: ls",
+      "id": "1761614747077-hioxty2ut",
+      "createdAt": 1761614747077
+    },
+    {
+      "type": "command_pattern",
+      "value": "git push origin",
+      "description": "Shell command: git push origin",
+      "id": "1761618807505-zq34o8thf",
+      "createdAt": 1761618807505
+    },
+    {
+      "type": "command_pattern",
+      "value": "tail",
+      "description": "Shell command: tail",
+      "id": "1761619711863-53w2sk6tz",
+      "createdAt": 1761619711863
+    },
+    {
+      "type": "command_pattern",
+      "value": "git diff HEAD",
+      "description": "Shell command: git diff HEAD",
+      "id": "1761620959418-07l0fp1sm",
+      "createdAt": 1761620959418
+    },
+    {
+      "type": "command_pattern",
+      "value": "pytest",
+      "description": "Shell command: pytest",
+      "id": "1761621294789-w007lmjzs",
+      "createdAt": 1761621294789
+    },
+    {
+      "type": "command_pattern",
+      "value": "ruff check",
+      "description": "Shell command: ruff check",
+      "id": "1761621337461-hvcychilv",
+      "createdAt": 1761621337461
+    },
+    {
+      "type": "command_pattern",
+      "value": "pylint",
+      "description": "Shell command: pylint",
+      "id": "1761621357327-6v3addaza",
+      "createdAt": 1761621357327
+    },
+    {
+      "type": "command_pattern",
+      "value": "git revert HEAD",
+      "description": "Shell command: git revert HEAD",
+      "id": "1761621371756-2vgp6rzcx",
+      "createdAt": 1761621371756
+    },
+    {
+      "type": "command_pattern",
+      "value": "git log",
+      "description": "Shell command: git log",
+      "id": "1761623196709-gc454530r",
+      "createdAt": 1761623196709,
+      "lastUsed": 1761688720585
+    },
+    {
+      "type": "command_pattern",
+      "value": "git show 06ae858",
+      "description": "Shell command: git show 06ae858",
+      "id": "1761625665779-dx0nlky73",
+      "createdAt": 1761625665779
+    },
+    {
+      "type": "command_pattern",
+      "value": "git diff 06ae858^1",
+      "description": "Shell command: git diff 06ae858^1",
+      "id": "1761625699078-gp01bqqf2",
+      "createdAt": 1761625699078
+    },
+    {
+      "type": "command_pattern",
+      "value": "git show",
+      "description": "Shell command: git show",
+      "id": "1761625707287-gmqqn3lkt",
+      "createdAt": 1761625707287
+    },
+    {
+      "type": "command_pattern",
+      "value": "conda run",
+      "description": "Shell command: conda run",
+      "id": "1761634555761-3srokpunx",
+      "createdAt": 1761634555761,
+      "lastUsed": 1761638751902
+    },
+    {
+      "type": "command_pattern",
+      "value": "echo",
+      "description": "Shell command: echo",
+      "id": "1761639217411-4zjw4u4mc",
+      "createdAt": 1761639217411
+    },
+    {
+      "type": "command_pattern",
+      "value": "git diff",
+      "description": "Shell command: git diff",
+      "id": "1761688738391-tvx0brk1a",
+      "createdAt": 1761688738391
+    }
+  ]
+}
