@@ -38,7 +38,7 @@ CONFIG_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST): str,
         vol.Required(CONF_PROTOCOL, default="UDP"): vol.In(PROTOCOL_CHOICES),
-        vol.Required(CONF_MODEL_FAMILY, default="none"): str,
+        vol.Required(CONF_MODEL_FAMILY, default="none", description={"suggested_value": "use 'DT' for 'MT' inverters"}): str,
     }
 )
 OPTIONS_SCHEMA = vol.Schema(
