@@ -136,9 +136,10 @@ class GoodweFlowHandler(ConfigFlow, domain=DOMAIN):
             model_family = user_input[CONF_MODEL_FAMILY]
             port = 502 if protocol == "TCP" else 8899
 
+            _family = None if model_family == "Auto-detect" else model_family
             try:
                 inverter = await connect(
-                    host=host, port=port, family=model_family, retries=10
+                    host=host, port=port, family=_family, retries=10
                 )
             except InverterError:
                 errors[CONF_HOST] = "connection_error"
