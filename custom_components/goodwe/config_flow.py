@@ -151,4 +151,5 @@ class GoodweFlowHandler(ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=CONFIG_SCHEMA,
             errors=errors,
+            description_placeholders={"model_family_help": "use 'DT' for 'MT' inverters"},
         )

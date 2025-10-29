@@ -13,9 +13,9 @@
                 "data": {
                     "host": "Hostname / IP Address",
                     "protocol": "Protocol",
-                    "model_family": "Inverter Family (optional) (use 'DT' for 'MT' inverters)"
+                    "model_family": "Inverter Family (optional)"
                 },
-                "description": "Connect to inverter",
+                "description": "Connect to inverter {model_family_help}",
                 "title": "GoodWe inverter"
             }
         }
