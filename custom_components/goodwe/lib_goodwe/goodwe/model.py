@@ -28,6 +28,8 @@ MPPT4_MODELS = ("HSB",)
 
 BAT_2_MODELS = ("25KET", "29K9ET")
 
+MT_MODEL_TAGS = ("25KMT",)
+
 
 def is_single_phase(inverter: Inverter) -> bool:
     return any(model in inverter.serial_number for model in SINGLE_PHASE_MODELS)

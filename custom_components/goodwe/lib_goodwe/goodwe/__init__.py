@@ -4,13 +4,14 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from .const import GOODWE_TCP_PORT, GOODWE_UDP_PORT
 from .dt import DT
 from .es import ES
 from .et import ET
-from .exceptions import InverterError, RequestFailedException
-from .inverter import Inverter, OperationMode, Sensor, SensorKind
-from .model import DT_MODEL_TAGS, ES_MODEL_TAGS, ET_MODEL_TAGS
+from .mt import MT
+from .const import GOODWE_UDP_PORT
+from .exceptions import InverterError
+from .inverter import Inverter
+from .model import DT_MODEL_TAGS, ES_MODEL_TAGS, ET_MODEL_TAGS, MT_MODEL_TAGS
 from .protocol import ProtocolCommand, UdpInverterProtocol, Aa55ProtocolCommand
 
 logger = logging.getLogger(__name__)
@@ -19,6 +20,7 @@ logger = logging.getLogger(__name__)
 ET_FAMILY = ["ET", "EH", "BT", "BH"]
 ES_FAMILY = ["ES", "EM", "BP"]
 DT_FAMILY = ["DT", "MS", "NS", "XS"]
+MT_FAMILY = ["MT"]
 
 # Initial discovery command
 DISCOVERY_COMMAND = Aa55ProtocolCommand("010200", "0182")
@@ -45,6 +47,8 @@ async def connect(host: str, port: int = GOODWE_UDP_PORT, family: str = None, co
         inv = ES(host, port, comm_addr, timeout, retries)
     elif family in DT_FAMILY:
         inv = DT(host, port, comm_addr, timeout, retries)
+    elif family in MT_FAMILY:
+        inv = MT(host, port, comm_addr, timeout, retries)
     elif do_discover:
         return await discover(host, port, timeout, retries)
     else:
@@ -85,11 +89,11 @@ async def discover(host: str, port: int = GOODWE_UDP_PORT, timeout: int = 1, ret
                         i = ES(host, port, 0, timeout, retries)
                         break
             if not i:
-                for model_tag in DT_MODEL_TAGS:
-                    if model_tag in serial_number:
-                        logger.debug("Detected DT/MS/D-NS/XS/GEP inverter %s, S/N:%s.", model_name, serial_number)
-                        i = DT(host, port, 0, timeout, retries)
-                        break
+                if serial_number.startswith(DT_MODEL_TAGS):
+                    i = DT(host, port, 0, timeout, retries)
+                elif serial_number.startswith(MT_MODEL_TAGS):
+                    i = MT(host, port, 0, timeout, retries)
+
             if i:
                 await i.read_device_info()
                 logger.debug("Connected to inverter %s, S/N:%s.", i.model_name, i.serial_number)
@@ -99,7 +103,7 @@ async def discover(host: str, port: int = GOODWE_UDP_PORT, timeout: int = 1, ret
             failures.append(ex)
 
     # Probe inverter specific protocols
-    for inv in [ET, DT, ES]:
+    for inv in [ET, DT, ES, MT]:
         i = inv(host, port, 0, timeout, retries)
         try:
             logger.debug("Probing %s inverter at %s.", inv.__name__, host)
