@@ -15,7 +15,7 @@
                     "protocol": "Protocol",
                     "model_family": "Inverter Family (optional) (use 'DT' for 'MT' inverters)"
                 },
-                "description": "Connect to inverter",
+                "description": "Connect to inverter (Component Version: {component_version})",
                 "title": "GoodWe inverter"
             }
         }
