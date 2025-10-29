@@ -7,11 +7,9 @@ from typing import Any
 
 import voluptuous as vol
 
-from .lib_goodwe.goodwe import InverterError, connect
 from homeassistant.config_entries import (
     ConfigEntry,
     ConfigFlow,
-    ConfigFlowResult,
     OptionsFlow,
 )
 from homeassistant.const import CONF_HOST, CONF_PROTOCOL, CONF_SCAN_INTERVAL
@@ -19,6 +17,7 @@ from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import config_validation as cv
 
+from .lib_goodwe.goodwe import InverterError, connect
 from .const import (
     CONF_KEEP_ALIVE,
     CONF_MODBUS_ID,
@@ -120,7 +119,7 @@ class GoodweFlowHandler(ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
-    ) -> ConfigFlowResult:
+    ) -> FlowResult:
         """Handle a flow initialized by the user."""
         errors = {}
         if user_input is not None:
@@ -152,5 +151,4 @@ class GoodweFlowHandler(ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=CONFIG_SCHEMA,
             errors=errors,
-            description_placeholders={"model_family_help": "use 'DT' for 'MT' inverters"},
         )
