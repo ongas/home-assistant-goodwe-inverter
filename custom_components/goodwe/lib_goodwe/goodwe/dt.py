@@ -190,7 +190,7 @@ class DT(Inverter):
                 response = await self._read_from_socket(self._READ_DEVICE_MODEL)
                 response = response.response_data()
                 self.model_name = response[0:16].decode("ascii").rstrip('\x00').strip()
-            except InverterError as e:
+            except InverterError:
                 logger.debug("No model name sent from the inverter.")
 
         if is_single_phase(self):
@@ -209,17 +209,19 @@ class DT(Inverter):
             response = response.response_data()
             self.meter_software_version = read_unsigned_int(response, 0)  # 30063
             self.meter_serial_number = self._decode(response[24:38])  # 30075 - 30082
-        except InverterError as e:
+        except InverterError:
             logger.debug("Could not read meter version info.")
 
     async def read_runtime_data(self) -> dict[str, Any]:
         response = await self._read_from_socket(self._READ_RUNNING_DATA)
         data = self._map_response(response, self._sensors)
+        logger.debug("DT Inverter: _has_meter is %s", self._has_meter)
 
         if self._has_meter:
             try:
                 response = await self._read_from_socket(self._READ_METER_DATA)
                 data.update(self._map_response(response, self._sensors_meter))
+                logger.debug("DT Inverter: meter_active_power in data: %s", 'meter_active_power' in data)
             except (RequestRejectedException, RequestFailedException):
                 logger.info("Meter values not supported, disabling further attempts.")
                 self._has_meter = False
