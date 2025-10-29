@@ -15,7 +15,8 @@ from homeassistant.config_entries import (
 from homeassistant.const import CONF_HOST, CONF_PROTOCOL, CONF_SCAN_INTERVAL
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
-from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import config_validation as cv, selector
+
 
 from .lib_goodwe.goodwe import InverterError, connect
 from .const import (
@@ -32,12 +33,18 @@ from .const import (
     DOMAIN,
 )
 
+MODEL_FAMILY_OPTIONS = [
+    "ET", "EH", "BT", "BH", "ES", "EM", "BP", "DT", "MS", "D-NS", "XS"
+]
+
 PROTOCOL_CHOICES = ["UDP", "TCP"]
 CONFIG_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST): str,
         vol.Required(CONF_PROTOCOL, default="UDP"): vol.In(PROTOCOL_CHOICES),
-        vol.Required(CONF_MODEL_FAMILY, default="none"): str,
+        vol.Required(CONF_MODEL_FAMILY, default="none"): selector.SelectSelector(
+            selector.SelectSelectorConfig(options=MODEL_FAMILY_OPTIONS)
+        ),
     }
 )
 OPTIONS_SCHEMA = vol.Schema(
@@ -45,7 +52,9 @@ OPTIONS_SCHEMA = vol.Schema(
         vol.Required(CONF_HOST): str,
         vol.Required(CONF_PROTOCOL): vol.In(PROTOCOL_CHOICES),
         vol.Required(CONF_KEEP_ALIVE): cv.boolean,
-        vol.Required(CONF_MODEL_FAMILY): str,
+        vol.Required(CONF_MODEL_FAMILY): selector.SelectSelector(
+            selector.SelectSelectorConfig(options=MODEL_FAMILY_OPTIONS)
+        ),
         vol.Optional(CONF_SCAN_INTERVAL): int,
         vol.Optional(CONF_MODBUS_ID): int,
         vol.Optional(CONF_NETWORK_RETRIES): cv.positive_int,
