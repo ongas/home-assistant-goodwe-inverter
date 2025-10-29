@@ -34,7 +34,7 @@ from .const import (
 )
 
 MODEL_FAMILY_OPTIONS = [
-    "ET", "EH", "BT", "BH", "ES", "EM", "BP", "DT", "MS", "D-NS", "XS"
+    "Auto-detect", "ET", "EH", "BT", "BH", "ES", "EM", "BP", "DT", "MS", "D-NS", "XS"
 ]
 
 PROTOCOL_CHOICES = ["UDP", "TCP"]
@@ -42,7 +42,7 @@ CONFIG_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST): str,
         vol.Required(CONF_PROTOCOL, default="UDP"): vol.In(PROTOCOL_CHOICES),
-        vol.Required(CONF_MODEL_FAMILY, default="ET"): selector.SelectSelector(
+        vol.Required(CONF_MODEL_FAMILY, default="Auto-detect"): selector.SelectSelector(
             selector.SelectSelectorConfig(options=MODEL_FAMILY_OPTIONS)
         ),
     }
@@ -52,7 +52,7 @@ OPTIONS_SCHEMA = vol.Schema(
         vol.Required(CONF_HOST): str,
         vol.Required(CONF_PROTOCOL): vol.In(PROTOCOL_CHOICES),
         vol.Required(CONF_KEEP_ALIVE): cv.boolean,
-        vol.Required(CONF_MODEL_FAMILY): selector.SelectSelector(
+        vol.Required(CONF_MODEL_FAMILY, default="Auto-detect"): selector.SelectSelector(
             selector.SelectSelectorConfig(options=MODEL_FAMILY_OPTIONS)
         ),
         vol.Optional(CONF_SCAN_INTERVAL): int,
