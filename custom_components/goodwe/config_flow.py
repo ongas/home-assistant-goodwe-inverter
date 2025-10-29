@@ -42,7 +42,7 @@ CONFIG_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST): str,
         vol.Required(CONF_PROTOCOL, default="UDP"): vol.In(PROTOCOL_CHOICES),
-        vol.Required(CONF_MODEL_FAMILY, default="none"): selector.SelectSelector(
+        vol.Required(CONF_MODEL_FAMILY, default="ET"): selector.SelectSelector(
             selector.SelectSelectorConfig(options=MODEL_FAMILY_OPTIONS)
         ),
     }
@@ -160,5 +160,4 @@ class GoodweFlowHandler(ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=CONFIG_SCHEMA,
             errors=errors,
-            description_placeholders={"model_family_help": "use 'DT' for 'MT' inverters"},
         )
