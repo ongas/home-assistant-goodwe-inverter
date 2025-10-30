@@ -38,7 +38,8 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt as dt_util
 from homeassistant.config_entries import ConfigEntry
 
-from .lib_goodwe.goodwe import Inverter, Sensor, SensorKind
+from .lib_goodwe.goodwe import Inverter
+from .lib_goodwe.goodwe.inverter import Sensor, SensorKind
 from .lib_goodwe.goodwe.sensor import (
     Enum,
     Enum2,
