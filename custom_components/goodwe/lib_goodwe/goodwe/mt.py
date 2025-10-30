@@ -408,6 +408,11 @@ class MT(Inverter):
         result = self._sensors
         if self._has_meter:
             result = result + self._sensors_meter
+        logger.debug(
+            "MT.sensors() called: _has_meter=%s, returning sensors: %s",
+            self._has_meter,
+            [s.id_ for s in result],
+        )
         return result
 
     def settings(self) -> tuple[Sensor, ...]:
