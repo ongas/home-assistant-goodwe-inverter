@@ -224,6 +224,7 @@ class MT(Inverter):
         self._settings: dict[str, Sensor] = {s.id_: s for s in self.__all_settings}
         self._sensors_map: dict[str, Sensor] | None = None
         self._has_meter: bool = True
+        logger.debug("MT.__init__: _has_meter initialized to True")
 
     @staticmethod
     def _single_phase_only(s: Sensor) -> bool:
@@ -292,9 +293,10 @@ class MT(Inverter):
                     "DT Inverter: meter_active_power in data: %s",
                     "meter_active_power" in data,
                 )
-            except (RequestRejectedException, RequestFailedException):
-                logger.info("Meter values not supported, disabling further attempts.")
+            except (RequestRejectedException, RequestFailedException) as ex:
+                logger.info("Meter values not supported, disabling further attempts. Exception: %s", ex)
                 self._has_meter = False
+                logger.debug("MT.read_runtime_data: _has_meter set to False due to exception: %s", ex)
 
         return data
 
