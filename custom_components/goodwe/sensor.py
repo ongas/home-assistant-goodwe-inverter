@@ -188,6 +188,15 @@ async def async_setup_entry(
     coordinator = config_entry.runtime_data.coordinator
     device_info = config_entry.runtime_data.device_info
 
+    # Debug: Log all sensor IDs being surfaced for this inverter
+    sensor_ids = [sensor.id_ for sensor in inverter.sensors()]
+    _LOGGER.debug(
+        "Registering GoodWe sensors for inverter %s (model: %s): %s",
+        getattr(inverter, "serial_number", "unknown"),
+        getattr(inverter, "model_name", "unknown"),
+        sensor_ids,
+    )
+
     # Individual inverter sensors entities
     entities.extend(
         InverterSensor(coordinator, device_info, inverter, sensor)

@@ -1,4 +1,5 @@
 """Simple test script to scan inverter present on local network"""
+
 import asyncio
 import goodwe
 import logging
