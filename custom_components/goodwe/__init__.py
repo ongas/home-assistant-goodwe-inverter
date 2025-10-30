@@ -19,11 +19,11 @@ from .const import (
     DOMAIN,
     PLATFORMS,
 )
-from .coordinator import GoodweConfigEntry, GoodweRuntimeData, GoodweUpdateCoordinator
+from .coordinator import GoodweRuntimeData, GoodweUpdateCoordinator
 from .services import async_setup_services, async_unload_services
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: GoodweConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up the Goodwe components from a config entry."""
     hass.data.setdefault(DOMAIN, {})
     host = entry.options.get(CONF_HOST, entry.data[CONF_HOST])
@@ -82,7 +82,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoodweConfigEntry) -> bo
 
 
 async def async_unload_entry(
-    hass: HomeAssistant, config_entry: GoodweConfigEntry
+    hass: HomeAssistant, config_entry: ConfigEntry
 ) -> bool:
     """Unload a config entry."""
     unload_ok = await hass.config_entries.async_unload_platforms(

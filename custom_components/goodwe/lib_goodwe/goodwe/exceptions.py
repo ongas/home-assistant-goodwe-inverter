@@ -15,7 +15,7 @@ class RequestFailedException(InverterError):
         consecutive_failures_count -- number requests failed in a consecutive streak
     """
 
-    def __init__(self, message: str = '', consecutive_failures_count: int = 0):
+    def __init__(self, message: str = "", consecutive_failures_count: int = 0):
         self.message: str = message
         self.consecutive_failures_count: int = consecutive_failures_count
 
@@ -28,7 +28,7 @@ class RequestRejectedException(InverterError):
         message -- rejection reason
     """
 
-    def __init__(self, message: str = ''):
+    def __init__(self, message: str = ""):
         self.message: str = message
 
 

@@ -1,4 +1,5 @@
 """Low level IP communication protocol implementation."""
+
 from __future__ import annotations
 
 import asyncio
@@ -9,10 +10,23 @@ import socket
 from asyncio.futures import Future
 from typing import Optional, Callable
 
-from .exceptions import MaxRetriesException, PartialResponseException, RequestFailedException, RequestRejectedException
-from .modbus import create_modbus_rtu_request, create_modbus_rtu_multi_request, create_modbus_tcp_request, \
-    create_modbus_tcp_multi_request, validate_modbus_rtu_response, validate_modbus_tcp_response, MODBUS_READ_CMD, \
-    MODBUS_WRITE_CMD, MODBUS_WRITE_MULTI_CMD
+from .exceptions import (
+    MaxRetriesException,
+    PartialResponseException,
+    RequestFailedException,
+    RequestRejectedException,
+)
+from .modbus import (
+    create_modbus_rtu_request,
+    create_modbus_rtu_multi_request,
+    create_modbus_tcp_request,
+    create_modbus_tcp_multi_request,
+    validate_modbus_rtu_response,
+    validate_modbus_tcp_response,
+    MODBUS_READ_CMD,
+    MODBUS_WRITE_CMD,
+    MODBUS_WRITE_MULTI_CMD,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -28,8 +42,9 @@ def _next_tx() -> bytes:
 
 
 class InverterProtocol:
-
-    def __init__(self, host: str, port: int, comm_addr: int, timeout: int, retries: int):
+    def __init__(
+        self, host: str, port: int, comm_addr: int, timeout: int, retries: int
+    ):
         self._host: str = host
         self._port: int = port
         self._comm_addr: int = comm_addr
@@ -48,11 +63,11 @@ class InverterProtocol:
     def _ensure_lock(self) -> asyncio.Lock:
         """Validate (or create) asyncio Lock.
 
-           The asyncio.Lock must always be created from within's asyncio loop,
-           so it cannot be eagerly created in constructor.
-           Additionally, since asyncio.run() creates and closes its own loop,
-           the lock's scope (its creating loop) mus be verified to support proper
-           behavior in subsequent asyncio.run() invocations.
+        The asyncio.Lock must always be created from within's asyncio loop,
+        so it cannot be eagerly created in constructor.
+        Additionally, since asyncio.run() creates and closes its own loop,
+        the lock's scope (its creating loop) mus be verified to support proper
+        behavior in subsequent asyncio.run() invocations.
         """
         if self._lock and self._running_loop == asyncio.get_event_loop():
             return self._lock
@@ -63,7 +78,11 @@ class InverterProtocol:
         return self._lock
 
     def _max_retries_reached(self) -> Future:
-        logger.debug("Max number of retries (%d) reached, request %s failed.", self.retries, self.command)
+        logger.debug(
+            "Max number of retries (%d) reached, request %s failed.",
+            self.retries,
+            self.command,
+        )
         self._close_transport()
         self.response_future = asyncio.get_running_loop().create_future()
         self.response_future.set_exception(MaxRetriesException)
@@ -102,7 +121,9 @@ class InverterProtocol:
 
 
 class UdpInverterProtocol(InverterProtocol, asyncio.DatagramProtocol):
-    def __init__(self, host: str, port: int, comm_addr: int, timeout: int = 1, retries: int = 3):
+    def __init__(
+        self, host: str, port: int, comm_addr: int, timeout: int = 1, retries: int = 3
+    ):
         super().__init__(host, port, comm_addr, timeout, retries)
         self._transport: asyncio.transports.DatagramTransport | None = None
         self._retry: int = 0
@@ -121,7 +142,10 @@ class UdpInverterProtocol(InverterProtocol, asyncio.DatagramProtocol):
 
     async def _connect(self) -> None:
         if not self._transport or self._transport.is_closing():
-            self._transport, self.protocol = await asyncio.get_running_loop().create_datagram_endpoint(
+            (
+                self._transport,
+                self.protocol,
+            ) = await asyncio.get_running_loop().create_datagram_endpoint(
                 lambda: self,
                 remote_addr=(self._host, self._port),
             )
@@ -145,7 +169,11 @@ class UdpInverterProtocol(InverterProtocol, asyncio.DatagramProtocol):
             self._timer = None
         try:
             if self._partial_data and self._partial_missing == len(data):
-                logger.debug("Composed fragmented response: %s + %s", self._partial_data.hex(), data.hex())
+                logger.debug(
+                    "Composed fragmented response: %s + %s",
+                    self._partial_data.hex(),
+                    data.hex(),
+                )
                 data = self._partial_data + data
                 self._partial_data = None
                 self._partial_missing = 0
@@ -157,10 +185,17 @@ class UdpInverterProtocol(InverterProtocol, asyncio.DatagramProtocol):
                 logger.debug("Received invalid response: %s", data.hex())
                 asyncio.get_running_loop().call_soon(self._timeout_mechanism)
         except PartialResponseException as ex:
-            logger.debug("Received response fragment (%d of %d): %s", ex.length, ex.expected, data.hex())
+            logger.debug(
+                "Received response fragment (%d of %d): %s",
+                ex.length,
+                ex.expected,
+                data.hex(),
+            )
             self._partial_data = data
             self._partial_missing = ex.expected - ex.length
-            self._timer = asyncio.get_running_loop().call_later(self.timeout, self._timeout_mechanism)
+            self._timer = asyncio.get_running_loop().call_later(
+                self.timeout, self._timeout_mechanism
+            )
         except asyncio.InvalidStateError:
             logger.debug("Response already handled: %s", data.hex())
         except RequestRejectedException as ex:
@@ -207,11 +242,15 @@ class UdpInverterProtocol(InverterProtocol, asyncio.DatagramProtocol):
         self._partial_missing = 0
         payload = command.request_bytes()
         if self._retry > 0:
-            logger.debug("Sending: %s - retry #%s/%s", self.command, self._retry, self.retries)
+            logger.debug(
+                "Sending: %s - retry #%s/%s", self.command, self._retry, self.retries
+            )
         else:
             logger.debug("Sending: %s", self.command)
         self._transport.sendto(payload)
-        self._timer = asyncio.get_running_loop().call_later(self.timeout, self._timeout_mechanism)
+        self._timer = asyncio.get_running_loop().call_later(
+            self.timeout, self._timeout_mechanism
+        )
 
     def _timeout_mechanism(self) -> None:
         """Timeout mechanism to prevent hanging transport"""
@@ -220,7 +259,11 @@ class UdpInverterProtocol(InverterProtocol, asyncio.DatagramProtocol):
             self._retry = 0
         else:
             if self._timer:
-                logger.debug("Failed to receive response to %s in time (%ds).", self.command, self.timeout)
+                logger.debug(
+                    "Failed to receive response to %s in time (%ds).",
+                    self.command,
+                    self.timeout,
+                )
                 self._timer = None
             if self.response_future and not self.response_future.done():
                 self.response_future.cancel()
@@ -230,7 +273,9 @@ class UdpInverterProtocol(InverterProtocol, asyncio.DatagramProtocol):
 
 
 class TcpInverterProtocol(InverterProtocol, asyncio.Protocol):
-    def __init__(self, host: str, port: int, comm_addr: int, timeout: int = 1, retries: int = 0):
+    def __init__(
+        self, host: str, port: int, comm_addr: int, timeout: int = 1, retries: int = 0
+    ):
         super().__init__(host, port, comm_addr, timeout, retries)
         self._transport: asyncio.transports.Transport | None = None
         self._retry: int = 0
@@ -250,19 +295,23 @@ class TcpInverterProtocol(InverterProtocol, asyncio.Protocol):
     async def _connect(self) -> None:
         if not self._transport or self._transport.is_closing():
             logger.debug("Opening connection.")
-            self._transport, self.protocol = await asyncio.get_running_loop().create_connection(
+            (
+                self._transport,
+                self.protocol,
+            ) = await asyncio.get_running_loop().create_connection(
                 lambda: self,
-                host=self._host, port=self._port,
+                host=self._host,
+                port=self._port,
             )
             if self.keep_alive:
                 try:
-                    sock = self._transport.get_extra_info('socket')
+                    sock = self._transport.get_extra_info("socket")
                     if sock is not None:
                         sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
                         sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPIDLE, 10)
                         sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPINTVL, 10)
                         sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPCNT, 3)
-                        if platform.system() == 'Windows':
+                        if platform.system() == "Windows":
                             sock.ioctl(socket.SIO_KEEPALIVE_VALS, (1, 10000, 10000))
                 except AttributeError as ex:
                     logger.debug("Failed to apply KEEPALIVE: %s", ex)
@@ -289,7 +338,11 @@ class TcpInverterProtocol(InverterProtocol, asyncio.Protocol):
             self._timer.cancel()
         try:
             if self._partial_data and self._partial_missing == len(data):
-                logger.debug("Composed fragmented response: %s + %s", self._partial_data.hex(), data.hex())
+                logger.debug(
+                    "Composed fragmented response: %s + %s",
+                    self._partial_data.hex(),
+                    data.hex(),
+                )
                 data = self._partial_data + data
                 self._partial_data = None
                 self._partial_missing = 0
@@ -302,10 +355,17 @@ class TcpInverterProtocol(InverterProtocol, asyncio.Protocol):
                 self.response_future.set_exception(RequestRejectedException())
                 self._close_transport()
         except PartialResponseException as ex:
-            logger.debug("Received response fragment (%d of %d): %s", ex.length, ex.expected, data.hex())
+            logger.debug(
+                "Received response fragment (%d of %d): %s",
+                ex.length,
+                ex.expected,
+                data.hex(),
+            )
             self._partial_data = data
             self._partial_missing = ex.expected - ex.length
-            self._timer = asyncio.get_running_loop().call_later(self.timeout, self._timeout_mechanism)
+            self._timer = asyncio.get_running_loop().call_later(
+                self.timeout, self._timeout_mechanism
+            )
         except asyncio.InvalidStateError:
             logger.debug("Response already handled: %s", data.hex())
         except RequestRejectedException as ex:
@@ -359,11 +419,15 @@ class TcpInverterProtocol(InverterProtocol, asyncio.Protocol):
         self._partial_missing = 0
         payload = command.request_bytes()
         if self._retry > 0:
-            logger.debug("Sending: %s - retry #%s/%s", self.command, self._retry, self.retries)
+            logger.debug(
+                "Sending: %s - retry #%s/%s", self.command, self._retry, self.retries
+            )
         else:
             logger.debug("Sending: %s", self.command)
         self._transport.write(payload)
-        self._timer = asyncio.get_running_loop().call_later(self.timeout, self._timeout_mechanism)
+        self._timer = asyncio.get_running_loop().call_later(
+            self.timeout, self._timeout_mechanism
+        )
 
     def _timeout_mechanism(self) -> None:
         """Retry mechanism to prevent hanging transport"""
@@ -371,7 +435,11 @@ class TcpInverterProtocol(InverterProtocol, asyncio.Protocol):
             self._retry = 0
         else:
             if self._timer:
-                logger.debug("Failed to receive response to %s in time (%ds).", self.command, self.timeout)
+                logger.debug(
+                    "Failed to receive response to %s in time (%ds).",
+                    self.command,
+                    self.timeout,
+                )
                 self._timer = None
             self._close_transport()
 
@@ -479,7 +547,9 @@ class Aa55ProtocolCommand(ProtocolCommand):
     The last 2 bytes are again plain checksum of header+payload.
     """
 
-    def __init__(self, payload: str, response_type: str, offset: int = 0, value: int = 0):
+    def __init__(
+        self, payload: str, response_type: str, offset: int = 0, value: int = 0
+    ):
         super().__init__(
             bytes.fromhex(
                 "AA55C07F"
@@ -518,7 +588,11 @@ class Aa55ProtocolCommand(ProtocolCommand):
         elif response_type:
             data_rt_int = int.from_bytes(data[4:6], byteorder="big", signed=True)
             if int(response_type, 16) != data_rt_int:
-                logger.debug("Response type unexpected: %04x, expected %s.", data_rt_int, response_type)
+                logger.debug(
+                    "Response type unexpected: %04x, expected %s.",
+                    data_rt_int,
+                    response_type,
+                )
                 return False
 
         checksum = 0
@@ -536,11 +610,11 @@ class Aa55ProtocolCommand(ProtocolCommand):
     def __repr__(self):
         if self.request[4] == 1:
             if self.request[5] == 2:
-                return f'READ device info ({self.request.hex()})'
+                return f"READ device info ({self.request.hex()})"
             if self.request[5] == 6:
-                return f'READ runtime data ({self.request.hex()})'
+                return f"READ runtime data ({self.request.hex()})"
             if self.request[5] == 9:
-                return f'READ settings ({self.request.hex()})'
+                return f"READ settings ({self.request.hex()})"
         return self.request.hex()
 
 
@@ -554,8 +628,8 @@ class Aa55ReadCommand(Aa55ProtocolCommand):
 
     def __repr__(self):
         if self.value > 1:
-            return f'READ {self.value} registers from {self.first_address} ({self.request.hex()})'
-        return f'READ register {self.first_address} ({self.request.hex()})'
+            return f"READ {self.value} registers from {self.first_address} ({self.request.hex()})"
+        return f"READ register {self.first_address} ({self.request.hex()})"
 
 
 class Aa55WriteCommand(Aa55ProtocolCommand):
@@ -567,7 +641,7 @@ class Aa55WriteCommand(Aa55ProtocolCommand):
         super().__init__(f"023905{register:04x}01{value:04x}", "02B9", register, value)
 
     def __repr__(self):
-        return f'WRITE {self.value} to register {self.first_address} ({self.request.hex()})'
+        return f"WRITE {self.value} to register {self.first_address} ({self.request.hex()})"
 
 
 class Aa55WriteMultiCommand(Aa55ProtocolCommand):
@@ -576,8 +650,12 @@ class Aa55WriteMultiCommand(Aa55ProtocolCommand):
     """
 
     def __init__(self, offset: int, values: bytes):
-        super().__init__(f"02390B{offset:04x}{len(values):02x}{values.hex()}",
-                         "02B9", offset, len(values) // 2)
+        super().__init__(
+            f"02390B{offset:04x}{len(values):02x}{values.hex()}",
+            "02B9",
+            offset,
+            len(values) // 2,
+        )
 
 
 class ModbusRtuProtocolCommand(ProtocolCommand):
@@ -627,12 +705,15 @@ class ModbusRtuReadCommand(ModbusRtuProtocolCommand):
     def __init__(self, comm_addr: int, offset: int, count: int):
         super().__init__(
             create_modbus_rtu_request(comm_addr, MODBUS_READ_CMD, offset, count),
-            MODBUS_READ_CMD, offset, count)
+            MODBUS_READ_CMD,
+            offset,
+            count,
+        )
 
     def __repr__(self):
         if self.value > 1:
-            return f'READ {self.value} registers from {self.first_address} ({self.request.hex()})'
-        return f'READ register {self.first_address} ({self.request.hex()})'
+            return f"READ {self.value} registers from {self.first_address} ({self.request.hex()})"
+        return f"READ register {self.first_address} ({self.request.hex()})"
 
 
 class ModbusRtuWriteCommand(ModbusRtuProtocolCommand):
@@ -643,10 +724,13 @@ class ModbusRtuWriteCommand(ModbusRtuProtocolCommand):
     def __init__(self, comm_addr: int, register: int, value: int):
         super().__init__(
             create_modbus_rtu_request(comm_addr, MODBUS_WRITE_CMD, register, value),
-            MODBUS_WRITE_CMD, register, value)
+            MODBUS_WRITE_CMD,
+            register,
+            value,
+        )
 
     def __repr__(self):
-        return f'WRITE {self.value} to register {self.first_address} ({self.request.hex()})'
+        return f"WRITE {self.value} to register {self.first_address} ({self.request.hex()})"
 
 
 class ModbusRtuWriteMultiCommand(ModbusRtuProtocolCommand):
@@ -656,8 +740,13 @@ class ModbusRtuWriteMultiCommand(ModbusRtuProtocolCommand):
 
     def __init__(self, comm_addr: int, offset: int, values: bytes):
         super().__init__(
-            create_modbus_rtu_multi_request(comm_addr, MODBUS_WRITE_MULTI_CMD, offset, values),
-            MODBUS_WRITE_MULTI_CMD, offset, len(values) // 2)
+            create_modbus_rtu_multi_request(
+                comm_addr, MODBUS_WRITE_MULTI_CMD, offset, values
+            ),
+            MODBUS_WRITE_MULTI_CMD,
+            offset,
+            len(values) // 2,
+        )
 
 
 class ModbusTcpProtocolCommand(ProtocolCommand):
@@ -696,12 +785,15 @@ class ModbusTcpReadCommand(ModbusTcpProtocolCommand):
     def __init__(self, comm_addr: int, offset: int, count: int):
         super().__init__(
             create_modbus_tcp_request(comm_addr, MODBUS_READ_CMD, offset, count),
-            MODBUS_READ_CMD, offset, count)
+            MODBUS_READ_CMD,
+            offset,
+            count,
+        )
 
     def __repr__(self):
         if self.value > 1:
-            return f'READ {self.value} registers from {self.first_address} ({self.request.hex()})'
-        return f'READ register {self.first_address} ({self.request.hex()})'
+            return f"READ {self.value} registers from {self.first_address} ({self.request.hex()})"
+        return f"READ register {self.first_address} ({self.request.hex()})"
 
 
 class ModbusTcpWriteCommand(ModbusTcpProtocolCommand):
@@ -712,10 +804,13 @@ class ModbusTcpWriteCommand(ModbusTcpProtocolCommand):
     def __init__(self, comm_addr: int, register: int, value: int):
         super().__init__(
             create_modbus_tcp_request(comm_addr, MODBUS_WRITE_CMD, register, value),
-            MODBUS_WRITE_CMD, register, value)
+            MODBUS_WRITE_CMD,
+            register,
+            value,
+        )
 
     def __repr__(self):
-        return f'WRITE {self.value} to register {self.first_address} ({self.request.hex()})'
+        return f"WRITE {self.value} to register {self.first_address} ({self.request.hex()})"
 
 
 class ModbusTcpWriteMultiCommand(ModbusTcpProtocolCommand):
@@ -725,5 +820,10 @@ class ModbusTcpWriteMultiCommand(ModbusTcpProtocolCommand):
 
     def __init__(self, comm_addr: int, offset: int, values: bytes):
         super().__init__(
-            create_modbus_tcp_multi_request(comm_addr, MODBUS_WRITE_MULTI_CMD, offset, values),
-            MODBUS_WRITE_MULTI_CMD, offset, len(values) // 2)
+            create_modbus_tcp_multi_request(
+                comm_addr, MODBUS_WRITE_MULTI_CMD, offset, values
+            ),
+            MODBUS_WRITE_MULTI_CMD,
+            offset,
+            len(values) // 2,
+        )

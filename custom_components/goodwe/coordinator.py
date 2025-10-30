@@ -7,7 +7,8 @@ from datetime import datetime, timedelta
 import logging
 from typing import Any
 
-from .lib_goodwe.goodwe import Inverter, InverterError, RequestFailedException
+from .lib_goodwe.goodwe import Inverter, InverterError
+from .lib_goodwe.goodwe.exceptions import RequestFailedException
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_SCAN_INTERVAL
 from homeassistant.core import HomeAssistant
@@ -22,8 +23,6 @@ from .const import DEFAULT_SCAN_INTERVAL
 
 _LOGGER = logging.getLogger(__name__)
 
-type GoodweConfigEntry = ConfigEntry[GoodweRuntimeData]
-
 
 @dataclass
 class GoodweRuntimeData:
@@ -37,12 +36,12 @@ class GoodweRuntimeData:
 class GoodweUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     """Gather data for the energy device."""
 
-    config_entry: GoodweConfigEntry
+    config_entry: ConfigEntry
 
     def __init__(
         self,
         hass: HomeAssistant,
-        entry: GoodweConfigEntry,
+        entry: ConfigEntry,
         inverter: Inverter,
     ) -> None:
         """Initialize update coordinator."""

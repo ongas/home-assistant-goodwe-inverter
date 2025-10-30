@@ -1,4 +1,5 @@
 """Modbus protocol implementation."""
+
 import logging
 from typing import Union
 
@@ -10,7 +11,7 @@ MODBUS_READ_CMD: int = 0x3
 MODBUS_WRITE_CMD: int = 0x6
 MODBUS_WRITE_MULTI_CMD: int = 0x10
 
-ILLEGAL_DATA_ADDRESS: str = 'ILLEGAL DATA ADDRESS'
+ILLEGAL_DATA_ADDRESS: str = "ILLEGAL DATA ADDRESS"
 
 FAILURE_CODES = {
     1: "ILLEGAL FUNCTION",
@@ -55,7 +56,9 @@ def _modbus_checksum(data: Union[bytearray, bytes]) -> int:
     return crc
 
 
-def create_modbus_rtu_request(comm_addr: int, cmd: int, offset: int, value: int) -> bytes:
+def create_modbus_rtu_request(
+    comm_addr: int, cmd: int, offset: int, value: int
+) -> bytes:
     """
     Create modbus RTU request.
     data[0] is inverter address
@@ -77,7 +80,9 @@ def create_modbus_rtu_request(comm_addr: int, cmd: int, offset: int, value: int)
     return bytes(data)
 
 
-def create_modbus_tcp_request(comm_addr: int, cmd: int, offset: int, value: int) -> bytes:
+def create_modbus_tcp_request(
+    comm_addr: int, cmd: int, offset: int, value: int
+) -> bytes:
     """
     Create modbus TCP request.
     data[0:1] is transaction identifier
@@ -104,7 +109,9 @@ def create_modbus_tcp_request(comm_addr: int, cmd: int, offset: int, value: int)
     return bytes(data)
 
 
-def create_modbus_rtu_multi_request(comm_addr: int, cmd: int, offset: int, values: bytes) -> bytes:
+def create_modbus_rtu_multi_request(
+    comm_addr: int, cmd: int, offset: int, values: bytes
+) -> bytes:
     """
     Create modbus RTU (multi value) request.
     data[0] is inverter address
@@ -130,7 +137,9 @@ def create_modbus_rtu_multi_request(comm_addr: int, cmd: int, offset: int, value
     return bytes(data)
 
 
-def create_modbus_tcp_multi_request(comm_addr: int, cmd: int, offset: int, values: bytes) -> bytes:
+def create_modbus_tcp_multi_request(
+    comm_addr: int, cmd: int, offset: int, values: bytes
+) -> bytes:
     """
     Create modbus TCP (multi value) request.
     data[0:1] is transaction identifier
@@ -161,7 +170,9 @@ def create_modbus_tcp_multi_request(comm_addr: int, cmd: int, offset: int, value
     return bytes(data)
 
 
-def validate_modbus_rtu_response(data: bytes, cmd: int, offset: int, value: int) -> bool:
+def validate_modbus_rtu_response(
+    data: bytes, cmd: int, offset: int, value: int
+) -> bool:
     """
     Validate the modbus RTU response.
     data[0:1] is header
@@ -175,41 +186,55 @@ def validate_modbus_rtu_response(data: bytes, cmd: int, offset: int, value: int)
         return False
     if data[3] == MODBUS_READ_CMD:
         if data[4] != value * 2:
-            logger.debug("Response has unexpected length: %d, expected %d.", data[4], value * 2)
+            logger.debug(
+                "Response has unexpected length: %d, expected %d.", data[4], value * 2
+            )
             return False
         expected_length = data[4] + 7
         if len(data) < expected_length:
             raise PartialResponseException(len(data), expected_length)
     elif data[3] in (MODBUS_WRITE_CMD, MODBUS_WRITE_MULTI_CMD):
         if len(data) < 10:
-            logger.debug("Response has unexpected length: %d, expected %d.", len(data), 10)
+            logger.debug(
+                "Response has unexpected length: %d, expected %d.", len(data), 10
+            )
             return False
         expected_length = 10
-        response_offset = int.from_bytes(data[4:6], byteorder='big', signed=False)
+        response_offset = int.from_bytes(data[4:6], byteorder="big", signed=False)
         if response_offset != offset:
-            logger.debug("Response has wrong offset: %X, expected %X.", response_offset, offset)
+            logger.debug(
+                "Response has wrong offset: %X, expected %X.", response_offset, offset
+            )
             return False
-        response_value = int.from_bytes(data[6:8], byteorder='big', signed=True)
+        response_value = int.from_bytes(data[6:8], byteorder="big", signed=True)
         if response_value != value:
-            logger.debug("Response has wrong value: %X, expected %X.", response_value, value)
+            logger.debug(
+                "Response has wrong value: %X, expected %X.", response_value, value
+            )
             return False
     else:
         expected_length = len(data)
 
     checksum_offset = expected_length - 2
-    if _modbus_checksum(data[2:checksum_offset]) != ((data[checksum_offset + 1] << 8) + data[checksum_offset]):
+    if _modbus_checksum(data[2:checksum_offset]) != (
+        (data[checksum_offset + 1] << 8) + data[checksum_offset]
+    ):
         logger.debug("Response CRC-16 checksum does not match.")
         return False
 
     if data[3] != cmd:
         failure_code = FAILURE_CODES.get(data[4], "UNKNOWN")
-        logger.debug("Response is command failure: %s.", FAILURE_CODES.get(data[4], "UNKNOWN"))
+        logger.debug(
+            "Response is command failure: %s.", FAILURE_CODES.get(data[4], "UNKNOWN")
+        )
         raise RequestRejectedException(failure_code)
 
     return True
 
 
-def validate_modbus_tcp_response(data: bytes, cmd: int, offset: int, value: int) -> bool:
+def validate_modbus_tcp_response(
+    data: bytes, cmd: int, offset: int, value: int
+) -> bool:
     """
     Validate the modbus TCP response.
     data[0:1] is transaction identifier
@@ -233,24 +258,34 @@ def validate_modbus_tcp_response(data: bytes, cmd: int, offset: int, value: int)
         if len(data) < expected_length:
             raise PartialResponseException(len(data), expected_length)
         if data[8] != value * 2:
-            logger.debug("Response has unexpected length: %d, expected %d.", data[8], value * 2)
+            logger.debug(
+                "Response has unexpected length: %d, expected %d.", data[8], value * 2
+            )
             return False
     elif data[7] in (MODBUS_WRITE_CMD, MODBUS_WRITE_MULTI_CMD):
         if len(data) < 12:
-            logger.debug("Response has unexpected length: %d, expected %d.", len(data), 12)
+            logger.debug(
+                "Response has unexpected length: %d, expected %d.", len(data), 12
+            )
             return False
-        response_offset = int.from_bytes(data[8:10], byteorder='big', signed=False)
+        response_offset = int.from_bytes(data[8:10], byteorder="big", signed=False)
         if response_offset != offset:
-            logger.debug("Response has wrong offset: %X, expected %X.", response_offset, offset)
+            logger.debug(
+                "Response has wrong offset: %X, expected %X.", response_offset, offset
+            )
             return False
-        response_value = int.from_bytes(data[10:12], byteorder='big', signed=True)
+        response_value = int.from_bytes(data[10:12], byteorder="big", signed=True)
         if response_value != value:
-            logger.debug("Response has wrong value: %X, expected %X.", response_value, value)
+            logger.debug(
+                "Response has wrong value: %X, expected %X.", response_value, value
+            )
             return False
 
     if data[7] != cmd:
         failure_code = FAILURE_CODES.get(data[8], "UNKNOWN")
-        logger.debug("Response is command failure: %s.", FAILURE_CODES.get(data[8], "UNKNOWN"))
+        logger.debug(
+            "Response is command failure: %s.", FAILURE_CODES.get(data[8], "UNKNOWN")
+        )
         raise RequestRejectedException(failure_code)
 
     return True

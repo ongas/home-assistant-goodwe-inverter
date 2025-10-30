@@ -33,7 +33,19 @@ from .const import (
 )
 
 MODEL_FAMILY_OPTIONS = [
-    "Auto-detect", "BH", "BP", "BT", "D-NS", "DT", "EH", "EM", "ES", "ET", "MS", "MT", "XS"
+    "Auto-detect",
+    "BH",
+    "BP",
+    "BT",
+    "D-NS",
+    "DT",
+    "EH",
+    "EM",
+    "ES",
+    "ET",
+    "MS",
+    "MT",
+    "XS",
 ]
 
 PROTOCOL_CHOICES = ["UDP", "TCP"]
