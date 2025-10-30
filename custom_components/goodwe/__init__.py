@@ -1,12 +1,13 @@
 """The Goodwe inverter component."""
 
-from .lib_goodwe.goodwe import InverterError, connect
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PROTOCOL
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.entity import DeviceInfo
 
+from .lib_goodwe.goodwe import InverterError, connect
 from .const import (
     CONF_KEEP_ALIVE,
     CONF_MODBUS_ID,

@@ -9,16 +9,7 @@ from decimal import Decimal
 import logging
 from typing import Any
 
-from .lib_goodwe.goodwe import Inverter, Sensor, SensorKind
-from .lib_goodwe.goodwe.sensor import (
-    Enum,
-    Enum2,
-    EnumBitmap4,
-    EnumBitmap22,
-    EnumCalculated,
-    EnumH,
-    EnumL,
-)
+
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -45,10 +36,20 @@ from homeassistant.helpers.event import async_track_point_in_time
 from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt as dt_util
+from homeassistant.config_entries import ConfigEntry
 
+from .lib_goodwe.goodwe import Inverter, Sensor, SensorKind
+from .lib_goodwe.goodwe.sensor import (
+    Enum,
+    Enum2,
+    EnumBitmap4,
+    EnumBitmap22,
+    EnumCalculated,
+    EnumH,
+    EnumL,
+)
 from .const import DOMAIN
 from .coordinator import GoodweUpdateCoordinator
-from homeassistant.config_entries import ConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
 

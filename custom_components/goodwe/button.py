@@ -5,15 +5,16 @@ from dataclasses import dataclass
 from datetime import datetime
 import logging
 
-from .lib_goodwe.goodwe import Inverter, InverterError
+
 from homeassistant.components.button import ButtonEntity, ButtonEntityDescription
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
-
-from .const import DOMAIN
 from homeassistant.config_entries import ConfigEntry
+
+from .lib_goodwe.goodwe import Inverter, InverterError
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
+
 from typing import Any
+from homeassistant.core import HomeAssistant
+from homeassistant.config_entries import ConfigEntry
 
 from .lib_goodwe.goodwe import Inverter, InverterError
-from homeassistant.core import HomeAssistant
-
-from homeassistant.config_entries import ConfigEntry
 
 
 async def async_get_config_entry_diagnostics(

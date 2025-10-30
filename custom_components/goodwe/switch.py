@@ -1,10 +1,9 @@
 """GoodWe PV inverter switch entities."""
 
-from dataclasses import dataclass
-import logging
-from typing import Any
 
-from .lib_goodwe.goodwe import Inverter, InverterError
+import logging
+from dataclasses import dataclass
+from typing import Any
 from homeassistant.components.switch import (
     SwitchDeviceClass,
     SwitchEntity,
@@ -16,6 +15,7 @@ from homeassistant.helpers.entity import DeviceInfo, EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import BaseCoordinatorEntity
 
+from .lib_goodwe.goodwe import Inverter, InverterError
 from .coordinator import GoodweUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)

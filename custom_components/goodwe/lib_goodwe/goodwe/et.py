@@ -4,13 +4,21 @@ from __future__ import annotations
 
 import logging
 
-from .const import *
+from .const import (
+    PV_MODES, BATTERY_MODES, WORK_MODES_ET, SAFETY_COUNTRIES, GRID_MODES, GRID_IN_OUT_MODES, ERROR_CODES, DIAG_STATUS_CODES, BMS_ALARM_CODES, BMS_WARNING_CODES
+)
 from .exceptions import RequestFailedException, RequestRejectedException
 from .inverter import Inverter, OperationMode, SensorKind as Kind
 from .modbus import ILLEGAL_DATA_ADDRESS
 from .model import is_2_battery, is_4_mppt, is_745_platform, is_single_phase
 from .protocol import ProtocolCommand
-from .sensor import *
+from .sensor import (
+    Sensor, Timestamp, Voltage, Current, Power4, PowerS, Frequency, Integer, Enum2, EnumCalculated,
+    ByteH, EnumH, ByteL, EnumL, Reactive, Apparent, Calculated, EcoModeV1, EcoModeV2,
+    PeakShavingMode, Long, ScheduleType, Float, Temp, CurrentS, Power4S, EnumBitmap4, Energy4, Energy, read_bytes4, read_grid_mode,
+    read_bytes4_signed, read_bytes2_signed, EnumBitmap22, CellVoltage, Decimal, Reactive4, Apparent4, Energy8, Power, EcoMode, read_unsigned_int
+)
+from typing import Any
 
 logger = logging.getLogger(__name__)
 

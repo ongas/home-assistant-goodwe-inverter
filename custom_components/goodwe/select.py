@@ -2,7 +2,7 @@
 
 import logging
 
-from .lib_goodwe.goodwe import Inverter, InverterError, OperationMode
+
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
 from homeassistant.const import (
     STATE_UNAVAILABLE,
@@ -15,9 +15,10 @@ from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
-
-from .const import DOMAIN
 from homeassistant.config_entries import ConfigEntry
+
+from .lib_goodwe.goodwe import Inverter, InverterError, OperationMode
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 

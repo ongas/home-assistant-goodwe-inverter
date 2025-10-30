@@ -6,7 +6,7 @@ from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 import logging
 
-from .lib_goodwe.goodwe import Inverter, InverterError
+
 from homeassistant.components.number import (
     NumberDeviceClass,
     NumberEntity,
@@ -16,9 +16,10 @@ from homeassistant.const import PERCENTAGE, EntityCategory, UnitOfPower
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
-
-from .const import DOMAIN
 from homeassistant.config_entries import ConfigEntry
+
+from .lib_goodwe.goodwe import Inverter, InverterError
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
