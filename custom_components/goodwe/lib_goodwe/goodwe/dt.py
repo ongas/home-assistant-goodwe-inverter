@@ -4,9 +4,7 @@ from __future__ import annotations
 
 import logging
 
-from .const import (
-    WORK_MODES, SAFETY_COUNTRIES, DERATING_MODE_CODES
-)
+from .const import WORK_MODES, SAFETY_COUNTRIES, DERATING_MODE_CODES
 from typing import Any
 from .exceptions import InverterError, RequestFailedException, RequestRejectedException
 from .inverter import Inverter, OperationMode, SensorKind as Kind
@@ -14,7 +12,29 @@ from .modbus import ILLEGAL_DATA_ADDRESS
 from .model import is_3_mppt, is_single_phase
 from .protocol import ProtocolCommand
 from .sensor import (
-    Sensor, Voltage, Current, Calculated, Frequency, Power4, Integer, PowerS, Power4S, Energy, Energy4, Energy4W, Apparent4, Reactive4, Temp, Long, Decimal, Timestamp, Enum2, EnumBitmap4, read_voltage, read_current, read_unsigned_int
+    Sensor,
+    Voltage,
+    Current,
+    Calculated,
+    Frequency,
+    Power4,
+    Integer,
+    PowerS,
+    Power4S,
+    Energy,
+    Energy4,
+    Energy4W,
+    Apparent4,
+    Reactive4,
+    Temp,
+    Long,
+    Decimal,
+    Timestamp,
+    Enum2,
+    EnumBitmap4,
+    read_voltage,
+    read_current,
+    read_unsigned_int,
 )
 
 logger = logging.getLogger(__name__)

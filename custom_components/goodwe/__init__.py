@@ -1,6 +1,5 @@
 """The Goodwe inverter component."""
 
-
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PROTOCOL
 from homeassistant.core import HomeAssistant
@@ -82,9 +81,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return True
 
 
-async def async_unload_entry(
-    hass: HomeAssistant, config_entry: ConfigEntry
-) -> bool:
+async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     unload_ok = await hass.config_entries.async_unload_platforms(
         config_entry, PLATFORMS

@@ -17,7 +17,8 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.config_entries import ConfigEntry
 
-from .lib_goodwe.goodwe import Inverter, InverterError, OperationMode
+from .lib_goodwe.goodwe import Inverter, InverterError
+from .lib_goodwe.goodwe.inverter import OperationMode
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
