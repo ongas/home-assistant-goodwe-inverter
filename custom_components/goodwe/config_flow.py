@@ -48,7 +48,7 @@ OPTIONS_SCHEMA = vol.Schema(
         vol.Required(CONF_PROTOCOL): vol.In(PROTOCOL_CHOICES),
         vol.Required(CONF_KEEP_ALIVE): cv.boolean,
         vol.Required(CONF_MODEL_FAMILY): str,
-        vol.Optional(CONF_SCAN_INTERVAL): int,
+        vol.Optional(CONF_SCAN_INTERVAL): vol.All(vol.Coerce(float), vol.Range(min=0.1)),
         vol.Optional(CONF_MODBUS_ID): int,
         vol.Optional(CONF_NETWORK_RETRIES): cv.positive_int,
         vol.Optional(CONF_NETWORK_TIMEOUT): cv.positive_int,
