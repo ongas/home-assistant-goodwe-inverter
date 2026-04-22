@@ -52,6 +52,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoodweConfigEntry) -> bo
             comm_addr=modbus_id,
             timeout=network_timeout,
             retries=network_retries,
+            do_discover=False,
         )
         inverter.set_keep_alive(keep_alive)
     except InverterError as err:

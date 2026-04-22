@@ -166,7 +166,7 @@ class GoodweFlowHandler(ConfigFlow, domain=DOMAIN):
                     model_family,
                 )
                 inverter = await connect(
-                    host=host, port=port, family=model_family, timeout=timeout, retries=retries
+                    host=host, port=port, family=model_family, timeout=timeout, retries=retries, do_discover=False
                 )
             except InverterError:
                 errors[CONF_HOST] = "connection_error"
@@ -187,8 +187,8 @@ class GoodweFlowHandler(ConfigFlow, domain=DOMAIN):
         """Detects the port of the Inverter."""
         port = GOODWE_UDP_PORT
         try:
-            inverter = await connect(host=host, port=port, timeout=timeout, retries=retries)
+            inverter = await connect(host=host, port=port, timeout=timeout, retries=retries, do_discover=False)
         except InverterError:
             port = GOODWE_TCP_PORT
-            inverter = await connect(host=host, port=port, timeout=timeout, retries=retries)
+            inverter = await connect(host=host, port=port, timeout=timeout, retries=retries, do_discover=False)
         return inverter, port
