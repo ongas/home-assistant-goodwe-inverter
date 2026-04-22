@@ -154,6 +154,8 @@ class GoodweFlowHandler(ConfigFlow, domain=DOMAIN):
             port = user_input.get(
                 CONF_PORT, GOODWE_UDP_PORT if protocol == "UDP" else GOODWE_TCP_PORT
             )
+            timeout = user_input.get(CONF_NETWORK_TIMEOUT, DEFAULT_NETWORK_TIMEOUT)
+            retries = user_input.get(CONF_NETWORK_RETRIES, DEFAULT_NETWORK_RETRIES)
 
             try:
                 _LOGGER.debug(
@@ -164,7 +166,7 @@ class GoodweFlowHandler(ConfigFlow, domain=DOMAIN):
                     model_family,
                 )
                 inverter = await connect(
-                    host=host, port=port, family=model_family, retries=10
+                    host=host, port=port, family=model_family, timeout=timeout, retries=retries
                 )
             except InverterError:
                 errors[CONF_HOST] = "connection_error"
@@ -179,12 +181,14 @@ class GoodweFlowHandler(ConfigFlow, domain=DOMAIN):
     @staticmethod
     async def async_detect_inverter_port(
         host: str,
+        timeout: int = DEFAULT_NETWORK_TIMEOUT,
+        retries: int = DEFAULT_NETWORK_RETRIES,
     ) -> tuple[Inverter, int]:
         """Detects the port of the Inverter."""
         port = GOODWE_UDP_PORT
         try:
-            inverter = await connect(host=host, port=port, retries=10)
+            inverter = await connect(host=host, port=port, timeout=timeout, retries=retries)
         except InverterError:
             port = GOODWE_TCP_PORT
-            inverter = await connect(host=host, port=port, retries=10)
+            inverter = await connect(host=host, port=port, timeout=timeout, retries=retries)
         return inverter, port

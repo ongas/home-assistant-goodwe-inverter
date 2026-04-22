@@ -95,7 +95,11 @@ async def async_check_port(
     hass: HomeAssistant, entry: GoodweConfigEntry, host: str
 ) -> Inverter:
     """Check the communication port of the inverter, it may have changed after a firmware update."""
-    inverter, port = await GoodweFlowHandler.async_detect_inverter_port(host=host)
+    timeout = entry.options.get(CONF_NETWORK_TIMEOUT, entry.data.get(CONF_NETWORK_TIMEOUT, DEFAULT_NETWORK_TIMEOUT))
+    retries = entry.options.get(CONF_NETWORK_RETRIES, entry.data.get(CONF_NETWORK_RETRIES, DEFAULT_NETWORK_RETRIES))
+    inverter, port = await GoodweFlowHandler.async_detect_inverter_port(
+        host=host, timeout=timeout, retries=retries
+    )
     family = type(inverter).__name__
     hass.config_entries.async_update_entry(
         entry,
@@ -153,9 +157,13 @@ async def async_migrate_entry(
                 ),
             ),
         )
+        timeout = config_entry.data.get(CONF_NETWORK_TIMEOUT, DEFAULT_NETWORK_TIMEOUT)
+        retries = config_entry.data.get(CONF_NETWORK_RETRIES, DEFAULT_NETWORK_RETRIES)
         if not port:
             try:
-                _, port = await GoodweFlowHandler.async_detect_inverter_port(host=host)
+                _, port = await GoodweFlowHandler.async_detect_inverter_port(
+                    host=host, timeout=timeout, retries=retries
+                )
             except InverterError as err:
                 raise ConfigEntryNotReady from err
         new_data = {
