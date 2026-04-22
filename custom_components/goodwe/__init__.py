@@ -1,5 +1,7 @@
 """The Goodwe inverter component."""
 
+import asyncio
+
 from goodwe import Inverter, InverterError, connect
 from goodwe.const import GOODWE_TCP_PORT, GOODWE_UDP_PORT
 from homeassistant.const import CONF_HOST, CONF_PORT, CONF_PROTOCOL, CONF_SCAN_INTERVAL
@@ -72,7 +74,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoodweConfigEntry) -> bo
     coordinator = GoodweUpdateCoordinator(hass, entry, inverter)
 
     # Fetch initial data so we have data when entities subscribe
-    await coordinator.async_config_entry_first_refresh()
+    # Use a timeout based on configured retry/timeout to prevent blocking during startup
+    max_wait = (network_retries + 1) * network_timeout + 5
+    try:
+        async with asyncio.timeout(max_wait):
+            await coordinator.async_config_entry_first_refresh()
+    except asyncio.TimeoutError:
+        raise ConfigEntryNotReady("Inverter did not respond within startup timeout") from None
 
     entry.runtime_data = GoodweRuntimeData(
         inverter=inverter,
