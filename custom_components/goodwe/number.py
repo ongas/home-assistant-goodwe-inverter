@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 import logging
@@ -14,6 +15,7 @@ from homeassistant.components.number import (
 )
 from homeassistant.const import PERCENTAGE, EntityCategory, UnitOfPower
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
@@ -21,6 +23,12 @@ from .const import DOMAIN
 from .coordinator import GoodweConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
+
+# Retry settings for inverter write operations.
+# Writes can collide with the coordinator's polling reads on the Modbus bus,
+# causing transient failures. Retrying with a delay avoids bus contention.
+_WRITE_MAX_RETRIES = 5
+_WRITE_RETRY_DELAY = 2  # seconds
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -261,6 +269,24 @@ class InverterNumberEntity(NumberEntity):
     async def async_set_native_value(self, value: float) -> None:
         """Set new value to inverter."""
         if self.entity_description.setter:
-            await self.entity_description.setter(self._inverter, int(value))
+            for attempt in range(_WRITE_MAX_RETRIES):
+                try:
+                    await self.entity_description.setter(self._inverter, int(value))
+                    break
+                except InverterError as err:
+                    if attempt >= _WRITE_MAX_RETRIES - 1:
+                        raise HomeAssistantError(
+                            f"Failed to set {self.entity_description.key} to {value} "
+                            f"after {_WRITE_MAX_RETRIES} attempts: {err}"
+                        ) from err
+                    _LOGGER.debug(
+                        "Retrying set %s to %s (attempt %d/%d): %s",
+                        self.entity_description.key,
+                        value,
+                        attempt + 1,
+                        _WRITE_MAX_RETRIES,
+                        err,
+                    )
+                    await asyncio.sleep(_WRITE_RETRY_DELAY)
         self._attr_native_value = value
         self.async_write_ha_state()
