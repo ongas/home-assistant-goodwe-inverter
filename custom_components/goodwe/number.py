@@ -28,7 +28,7 @@ _LOGGER = logging.getLogger(__name__)
 # Writes can collide with the coordinator's polling reads on the Modbus bus,
 # causing transient failures. Retrying with a delay avoids bus contention.
 _WRITE_MAX_RETRIES = 5
-_WRITE_RETRY_DELAY = 2  # seconds
+_WRITE_RETRY_DELAY = 0.5  # seconds
 
 
 @dataclass(frozen=True, kw_only=True)
